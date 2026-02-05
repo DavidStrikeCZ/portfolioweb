@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langoš Designs | Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. GLOBÁLNÍ NASTAVENÍ --- */
+        :root {
+            --bg-dark: #050505;
+            --bg-panel: #0f1115;
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+            --accent: #6fa7fd; 
+            --accent-dim: rgba(111, 167, 253, 0.15);
+            --grid-color: rgba(255, 255, 255, 0.03);
+            --font-heading: 'Rajdhani', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, transparent 0%, #050505 90%),
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
+        h1 { font-weight: 700; font-size: 4rem; line-height: 1; margin-bottom: 0.5rem; }
+        h2 { font-weight: 600; font-size: 2.5rem; margin-bottom: 2rem; border-left: 4px solid var(--accent); padding-left: 15px; }
+        p { color: var(--text-muted); line-height: 1.6; font-size: 1rem; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+        /* --- NAVIGACE --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(12px); z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        /* Úprava: Logo je nyní klikatelné */
+        .nav-logo { 
+            font-family: var(--font-heading); font-weight: 700; font-size: 1.6rem; 
+            letter-spacing: 0.05em; color: var(--text-main); cursor: pointer; 
+        }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-item { 
+            font-family: var(--font-heading); font-weight: 600; text-transform: uppercase; 
+            font-size: 0.9rem; cursor: pointer; opacity: 0.6; transition: 0.3s;
+        }
+        .nav-item:hover, .nav-item.active { opacity: 1; color: var(--accent); text-shadow: 0 0 15px var(--accent-dim); }
+
+        /* --- HLAVNÍ OBSAH --- */
+        main { padding: 120px 20px 60px 20px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
+        .page-section { display: none; animation: fadeIn 0.6s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- SEKCE DOMŮ --- */
+        .hero-content { display: flex; flex-direction: column; justify-content: center; min-height: 70vh; }
+        .hero-logo-img { width: 140px; margin-bottom: 30px; filter: drop-shadow(0 0 25px rgba(111, 167, 253, 0.2)); }
+        .hero-subtitle { color: var(--accent); font-family: var(--font-heading); letter-spacing: 0.2em; font-weight: 600; margin-bottom: 10px; }
+        
+        .latest-work-section { margin-top: 50px; margin-bottom: 40px; }
+        .section-label-small { 
+            font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; 
+            margin-bottom: 15px; letter-spacing: 0.1em; display: flex; align-items: center; gap: 10px;
+        }
+        .section-label-small::after { content:''; height: 1px; flex-grow: 1; background: rgba(255,255,255,0.1); }
+        .latest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .latest-item {
+            aspect-ratio: 16/9; background: var(--bg-panel); border-radius: 8px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); cursor: pointer; position: relative; transition: 0.3s;
+        }
+        .latest-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.7; }
+        .latest-item:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .latest-item:hover img { transform: scale(1.05); opacity: 1; }
+        
+        .home-collabs { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .collab-bubble {
+            width: 50px; height: 50px; background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .collab-bubble img { width: 60%; opacity: 0.8; }
+        .collab-bubble:hover { border-color: var(--accent); transform: scale(1.1); box-shadow: 0 0 15px var(--accent-dim); }
+
+        .btn-outline {
+            padding: 10px 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px;
+            font-size: 0.8rem; font-weight: 600; text-transform: uppercase; cursor: pointer; 
+            transition: 0.3s; color: var(--text-muted); background: transparent;
+        }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+        /* --- SEKCE PORTFOLIO & FILTR --- */
+        /* Styl pro filtrovací tlačítka */
+        .filter-container { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 8px 16px; background: transparent; border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted); font-family: var(--font-heading); text-transform: uppercase;
+            font-weight: 600; letter-spacing: 0.05em; border-radius: 4px; cursor: pointer; transition: 0.3s;
+        }
+        .filter-btn:hover { border-color: var(--accent); color: #fff; }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-dim); }
+
+        .grid-albums { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .card {
+            background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+            overflow: hidden; cursor: pointer; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .card[style*="display: none"] { display: none !important; } /* Pro JS filtraci */
+
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 40px rgba(111, 167, 253, 0.15); }
+        .card-img-wrap { height: 220px; width: 100%; overflow: hidden; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; filter: grayscale(20%); }
+        .card:hover .card-img { transform: scale(1.05); filter: grayscale(0%); }
+        .card-body { padding: 20px; }
+        .card-title { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 600; margin-bottom: 5px; }
+        .card-cat { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+        /* --- SEKCE SPOLUPRÁCE --- */
+        .collab-full-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .collab-box {
+            background: var(--bg-panel); padding: 30px; border-radius: 8px; display: flex; 
+            flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; text-align: center;
+        }
+        .collab-box:hover { border-color: var(--accent); background: var(--accent-dim); }
+        .collab-box img { max-width: 80%; max-height: 50px; margin-bottom: 15px; }
+        .collab-box h4 { font-size: 0.9rem; margin: 0; color: #fff; }
+        .collab-box p { font-size: 0.7rem; margin: 5px 0 0 0; color: var(--text-muted); }
+        .inactive { opacity: 0.4; filter: grayscale(100%); }
+        .inactive:hover { opacity: 1; filter: grayscale(0%); }
+
+        /* --- SEKCE KONTAKT --- */
+        .contact-wrap {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            background: var(--bg-panel); padding: 50px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .contact-label { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 600; }
+        .contact-value { font-size: 1.8rem; font-family: var(--font-heading); font-weight: 600; }
+        .contact-link { display: block; font-size: 1.2rem; margin-bottom: 10px; color: var(--text-main); }
+        .contact-link:hover { color: var(--accent); }
+
+        .btn-primary {
+            display: inline-block; padding: 14px 35px; background: var(--accent); color: #000;
+            font-weight: 700; font-family: var(--font-heading); text-transform: uppercase;
+            border-radius: 4px; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-primary:hover { background: #fff; box-shadow: 0 0 25px var(--accent); }
+
+        /* --- PANEL (GALERIE I FORMULÁŘ) --- */
+        .panel-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: 2000; opacity: 0; pointer-events: none; transition: 0.4s;
+        }
+        .panel-side {
+            position: fixed; top: 0; right: -70%; width: 70%; height: 100%;
+            background: #0b0d12; z-index: 2001; transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 60px; overflow-y: auto; border-left: 1px solid var(--accent);
+            box-shadow: -30px 0 80px rgba(0,0,0,0.9);
+        }
+        body.open-panel .panel-overlay { opacity: 1; pointer-events: auto; }
+        body.open-panel .panel-side { right: 0; }
+        
+        .close-panel {
+            position: absolute; top: 30px; right: 40px; font-size: 2.5rem; cursor: pointer; 
+            color: var(--text-muted); transition: 0.3s;
+        }
+        .close-panel:hover { color: var(--accent); transform: rotate(90deg); }
+        .gallery-content h2 { color: var(--accent); margin-bottom: 10px; }
+        .gallery-content img { width: 100%; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); }
+
+        /* Styl pro formulář */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.9rem; }
+        .form-input { 
+            width: 100%; padding: 15px; background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-family: var(--font-body);
+        }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px var(--accent-dim); }
+        textarea.form-input { min-height: 150px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            .latest-grid { grid-template-columns: 1fr; }
+            .contact-wrap { grid-template-columns: 1fr; padding: 30px; }
+            .panel-side { width: 100%; padding: 25px; }
+            nav { justify-content: center; bottom: 0; top: auto; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+            .nav-logo { display: none; }
+            .nav-links { gap: 20px; font-size: 0.8rem; }
+            .hero-content { min-height: auto; padding-top: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo" onclick="showPage('home')">langos_<span>designs</span></div>
+        <div class="nav-links">
+            <div class="nav-item active" onclick="showPage('home')">Domů</div>
+            <div class="nav-item" onclick="showPage('portfolio')">Portfolio</div>
+            <div class="nav-item" onclick="showPage('collab')">Spolupráce</div>
+            <div class="nav-item" onclick="showPage('contact')">Kontakt</div>
+        </div>
+    </nav>
+
+    <main>
+        
+        <section id="home" class="page-section active">
+            <div class="hero-content">
+                <img src="https://i.imgur.com/VaE5dG7.png" alt="Langoš Designs Logo" class="hero-logo-img">
+                <div class="hero-subtitle">GRAFICKÝ DESIGN & ART DIRECTION</div>
+                <h1>Langoš Designs</h1>
+                <p>Specializuji se na vizuální identity, branding a moderní webovou grafiku.<br>Tvořím design, který funguje.</p>
+
+                <div class="latest-work-section">
+                    <div class="section-label-small">Poslední dokončené projekty</div>
+                    <div class="latest-grid">
+                        <div class="latest-item" onclick="openGallery('project1')" title="Zobrazit projekt">
+                            <img src="https://via.placeholder.com/400x250/0a0e1a/6fa7fd?text=Social+Media">
+                        </div>
+                        <div class="latest-item" onclick="openGallery('project2')" title="Zobrazit projekt">
+                            <img src="https://via.placeholder.com/400x250/111/6fa7fd?text=Merch+Design">
+                        </div>
+                         <div class="latest-item" onclick="openGallery('project3')" title="Zobrazit projekt">
+                            <img src="https://via.placeholder.com/400x250/222/6fa7fd?text=Loga+2024">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-label-small">Aktivní spolupráce</div>
+                <div class="home-collabs">
+                    <div class="collab-bubble" title="Klient A">
+                        <img src="https://via.placeholder.com/50/6fa7fd/000000?text=A" alt="Klient A">
+                    </div>
+                    <div class="collab-bubble" title="Klient B">
+                        <img src="https://via.placeholder.com/50/6fa7fd/000000?text=B" alt="Klient B">
+                    </div>
+                    <button class="btn-outline" onclick="showPage('collab')">+ Zobrazit všechny</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="page-section">
+            <h2>Všechny projekty</h2>
+            
+            <div class="filter-container">
+                <button class="filter-btn" onclick="toggleFilter(this, 'Zakázka')">Zakázka</button>
+                <button class="filter-btn" onclick="toggleFilter(this, 'Vlastní')">Vlastní Tvorba</button>
+                <button class="filter-btn" onclick="toggleFilter(this, 'Branding')">Branding</button>
+            </div>
+
+            <div class="grid-albums">
+                <div class="card" onclick="openGallery('project1')" data-category="Zakázka">
+                    <div class="card-img-wrap">
+                        <img src="https://via.placeholder.com/600x400/0a0e1a/6fa7fd?text=Social+Media+Pack" class="card-img">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-cat">Zakázka</div>
+                        <div class="card-title">Social Media Grafika</div>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openGallery('project2')" data-category="Vlastní">
+                    <div class="card-img-wrap">
+                        <img src="https://via.placeholder.com/600x400/111827/6fa7fd?text=Merch+Design" class="card-img">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-cat">Vlastní Tvorba</div>
+                        <div class="card-title">Merch Design 2024</div>
+                    </div>
+                </div>
+                
+                <div class="card" onclick="openGallery('project3')" data-category="Branding">
+                    <div class="card-img-wrap">
+                        <img src="https://via.placeholder.com/600x400/000/6fa7fd?text=Loga" class="card-img">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-cat">Branding</div>
+                        <div class="card-title">Kolekce Logotypů</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="collab" class="page-section">
+            <h2>Spolupráce</h2>
+            <div class="section-label-small">Aktivní partneři</div>
+            <div class="collab-full-grid">
+                <a href="#" class="collab-box">
+                    <img src="https://via.placeholder.com/100/6fa7fd/000?text=LOGO" alt="">
+                    <h4>Název Klienta</h4>
+                    <p>Branding & Web</p>
+                </a>
+                <a href="#" class="collab-box">
+                    <img src="https://via.placeholder.com/100/6fa7fd/000?text=LOGO" alt="">
+                    <h4>Firma s.r.o.</h4>
+                    <p>Dlouhodobá spolupráce</p>
+                </a>
+            </div>
+            <div class="section-label-small" style="margin-top: 60px;">Ukončené / Minulé projekty</div>
+            <div class="collab-full-grid">
+                <div class="collab-box inactive">
+                    <img src="https://via.placeholder.com/100/555/000?text=OLD" alt="">
+                    <h4>Projekt 2023</h4>
+                    <p>Ukončeno</p>
+                </div>
+                <div class="collab-box inactive">
+                    <img src="https://via.placeholder.com/100/555/000?text=OLD" alt="">
+                    <h4>Gaming Team</h4>
+                    <p>Rebrand</p>
+                </div>
+                <div class="collab-box inactive">
+                    <img src="https://via.placeholder.com/100/555/000?text=OLD" alt="">
+                    <h4>Startup</h4>
+                    <p>Logo design</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="page-section">
+            <h2>Kontakt</h2>
+            <div class="contact-wrap">
+                <div>
+                    <div class="contact-item">
+                        <span class="contact-label">Máš zájem o spolupráci?</span>
+                        <div class="contact-value">tvujemail@email.cz</div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <span class="contact-label">Sociální sítě</span>
+                        <a href="#" class="contact-link">Instagram (Grafika)</a>
+                        <a href="#" class="contact-link">Instagram (Osobní)</a>
+                        <div class="contact-value" style="font-size: 1rem; margin-top: 10px;">Discord: @langos_designs</div>
+                    </div>
+                    
+                    <button class="btn-primary" onclick="openContactForm()">Napsat zprávu</button>
+                </div>
+                <div style="opacity: 0.6;">
+                    <p>Vždy hledám nové zajímavé projekty. Pokud potřebuješ logo, design na sociální sítě nebo kompletní rebranding, ozvi se mi.<br><br>Odpovídám většinou do 24 hodin.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="panel-overlay" onclick="closePanel()"></div>
+    <div class="panel-side" id="sidePanel">
+        <div class="close-panel" onclick="closePanel()">&times;</div>
+        
+        <div id="panelContent" class="gallery-content"></div>
+    </div>
+
+    <script>
+        // --- LOGIKA PŘEPÍNÁNÍ STRÁNEK ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            if(pageId === 'home') navItems[0].classList.add('active');
+            if(pageId === 'portfolio') navItems[1].classList.add('active');
+            if(pageId === 'collab') navItems[2].classList.add('active');
+            if(pageId === 'contact') navItems[3].classList.add('active');
+            
+            window.scrollTo(0,0);
+        }
+
+        // --- FILTRACE PROJEKTŮ ---
+        let activeFilters = [];
+
+        function toggleFilter(btn, category) {
+            // Přepnutí třídy na tlačítku
+            btn.classList.toggle('active');
+            
+            // Logika pole filtrů
+            if (activeFilters.includes(category)) {
+                activeFilters = activeFilters.filter(item => item !== category);
+            } else {
+                activeFilters.push(category);
+            }
+
+            filterProjects();
+        }
+
+        function filterProjects() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                
+                // Pokud nejsou filtry, ukaž vše. Jinak ukaž jen pokud odpovídá filtru.
+                if (activeFilters.length === 0 || activeFilters.includes(cardCat)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // --- DATA GALERIÍ ---
+        const projects = {
+            'project1': {
+                title: "Social Media Pack",
+                desc: "Kompletní sada šablon pro Instagram a Facebook. Důraz na čitelnost a modrý akcent.",
+                images: [
+                    "https://via.placeholder.com/800x600/0a0e1a/6fa7fd?text=Ukazka+Postu+1",
+                    "https://via.placeholder.com/800x600/0a0e1a/6fa7fd?text=Story+Design"
+                ]
+            },
+            'project2': {
+                title: "Merch Design 2024",
+                desc: "Návrhy potisku na textil pro e-shop. Streetwear styl.",
+                images: [
+                    "https://via.placeholder.com/800x800/111/fff?text=Tricko+Mockup",
+                ]
+            },
+            'project3': {
+                title: "Kolekce Logotypů",
+                desc: "Výběr mých nejlepších log za poslední rok. Minimalismus a future styl.",
+                images: [
+                    "https://via.placeholder.com/800x600/222/fff?text=Logo+A",
+                    "https://via.placeholder.com/800x600/222/fff?text=Logo+B"
+                ]
+            }
+        };
+
+        const contentDiv = document.getElementById('panelContent');
+
+        // Otevření galerie
+        function openGallery(id) {
+            const data = projects[id];
+            if(!data) return;
+            
+            let html = `<h2>${data.title}</h2><p>${data.desc}</p><br>`;
+            data.images.forEach(img => {
+                html += `<img src="${img}" loading="lazy">`;
+            });
+            contentDiv.innerHTML = html;
+            document.body.classList.add('open-panel');
+        }
+
+        // Otevření kontaktního formuláře
+        function openContactForm() {
+            let html = `
+                <h2>Napsat Zprávu</h2>
+                <p>Máš dotaz nebo poptávku? Vyplň formulář níže.</p>
+                <br>
+                <form onsubmit="alert('Odesláno (pouze demo)'); return false;">
+                    <div class="form-group">
+                        <label class="form-label">Jméno / Firma</label>
+                        <input type="text" class="form-input" placeholder="Tvoje jméno">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="email@domena.cz">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zpráva</label>
+                        <textarea class="form-input" placeholder="Popis projektu nebo dotaz..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Odeslat poptávku</button>
+                </form>
+            `;
+            contentDiv.innerHTML = html;
+            document.body.classList.add('open-panel');
+        }
+
+        function closePanel() {
+            document.body.classList.remove('open-panel');
+        }
+    </script>
+</body>
+</html>
